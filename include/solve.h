@@ -1,6 +1,6 @@
 
 
-#ifndef _SOLVE_H_ 
+#ifndef _SOLVE_H_
 #define _SOLVE_H_ 1
 #include<stdio.h>
 #include<stdlib.h>
@@ -11,9 +11,17 @@
 extern "C"{
 #endif
 
+/*	Solve any given input.	*/
 extern int solve(const char* equation);
-extern int solveIntegral(const char* equation);
-extern int solvearithmetic(const char* equation,long* answ);
+
+/*	solve integral.	*/
+extern double solveIntegral(const char* equation);
+
+/**/
+extern double solvearithmetic(const char* equation, long* answ);
+
+/**/
+extern double solveEquation(const char* equatioin);
 
 
 #ifdef __cplusplus
