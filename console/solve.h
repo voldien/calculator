@@ -11,18 +11,9 @@
 extern "C"{
 #endif
 
+extern const char* get_version(void);
 /*	Solve any given input.	*/
 extern int solve(const char* equation);
-
-/*	solve integral.	*/
-extern double solveIntegral(const char* equation);
-
-/**/
-extern double solvearithmetic(const char* equation, long* answ);
-
-/**/
-extern double solveEquation(const char* equatioin);
-
 
 #ifdef __cplusplus
 }

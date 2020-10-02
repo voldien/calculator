@@ -9,12 +9,6 @@
 extern "C"{
 #endif
 
-extern int transform_expression(const char* expression, char** trans_express);
-
-/**
-	replace original expression by a simplify expression
-*/
-extern int insert_expression(const char* paranthes_pos, char* express,const char* replace_express,unsigned int orignal_expression_size);
 
 
 

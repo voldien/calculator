@@ -1,3 +1,61 @@
+#include"cstring.h"
+#include<stdlib.h>
+#include<string.h>
+#include<malloc.h>
+#include <limits.h>
+#include<wchar.h>
+
+void initString(CString *string) {
+	string->text = NULL;
+	string->len = 0;
+}
+
+void allocateString(CString *string, int len) {
+	
+	const int charLen = sizeof(char);
+	string->text = realloc(string->text, charLen * len);
+	string->len = 0;
+}
+
+void setString(CString *string, char *text) {
+	allocateString(string, strlen(text));
+	strcpy(string->text, text);
+	string->len = strlen(text);
+}
+
+void deleteString(CString *string) {
+	free(string->text);
+}
+
+void setStringN(CString *string, char *text, int numChr) {
+	strncat(string->text, text, numChr);
+}
+
+void copyString(CString *source, CString *dest) {
+
+}
+
+void copyStringN(CString *source, CString *dest, int numChr) {
+
+}
+
+char *strString(CString *string, const char *str) {}
+
+char *rstrString(CString *string, const char *str) {}
+
+char *trimString(CString *string) {}
+
+char *strupperString(CString *string) {}
+
+char *strlowerString(CString *string) {}
+
+int insertString(CString *string, const char *str) {}
+
+int changeEncodingString(CString *string, int encoding) {
+
+}
+
+/*
 #include"string_utility.h"
 #include<assert.h>
 #include<string.h>
@@ -18,8 +76,8 @@ char* rstrstr(const char* _Str,const char* _Str_comp,int pos){
 		return NULL;// invalid pointer
 	len = strlen(_Str);		  // length of c-strings
 	clen = strlen(_Str_comp); // length of c-strings
-    if(pos > len)
-        return NULL;
+	if(pos > len)
+		return NULL;
 
 	// iterate through all character
 	for(i = pos; i >= 0; i--){
@@ -46,9 +104,11 @@ char* strstword(char* _Str, const char* _Str_comp){
 	}
 }
 
+*/
 /*
 	// trim c-string
-*/
+*//*
+
 void strtrim(char* _Str){
 	unsigned int len,i,n_space = 0;
 	unsigned int num_space = 0;
@@ -74,9 +134,11 @@ void strtrim(char* _Str){
 		n_space = 0; // reset
 	}
 }
+*/
 /*
 	Trim from left intill it reach first character
-*/
+*//*
+
 void strtriml(char* _Str){
 	unsigned int len;
 	unsigned int i;
@@ -86,9 +148,11 @@ void strtriml(char* _Str){
 		continue;
 	}
 }
+*/
 /*
 	Trim from right intill it reach first character
-*/
+*//*
+
 void strtrimr(char* _Str){
 	unsigned int len;
 	unsigned int i;
@@ -97,9 +161,11 @@ void strtrimr(char* _Str){
 		if(_Str[i]==' ')break;
 	}
 }
+*/
 /*
 	c-string to lower case character
-*/
+*//*
+
 void strlower(char* _Str){
 	unsigned int len,j;
 	len = strlen(_Str);
@@ -114,7 +180,9 @@ void strupper(char* _Str){
 		_Str[j] = (char)toupper(_Str[j]);continue;
 	}
 }
-/*	repeting sequence	*/
+*/
+/*	repeting sequence	*//*
+
 int strsequence(char* _Str,char*_Str_sequence){
 	unsigned int n = 0;	// number of sequence
 	char* cpos = _Str;	//
@@ -134,7 +202,7 @@ int strrepword(char* _Str, char* _Str_word_sequence){
 		cpos = strstr(cpos,_Str_word_sequence);
 		if(!cpos)break;// no more identially
 		if(!isalpha(*(cpos - 1)) &&
-			!isalpha(*(cpos + len)))
+		   !isalpha(*(cpos + len)))
 			n++;
 		cpos += len;// out of scope of current search word
 	}
@@ -168,12 +236,16 @@ int strerase(char** _Str, int pos, int length){
 }
 
 
+*/
 /*
 	// UNICODE
-*/
+*//*
+
 //===========================================
 #ifdef UNICODE
-/*	trim c-wide-string	*/
+*/
+/*	trim c-wide-string	*//*
+
 void wcstrim(wchar_t* _wStr){
 	unsigned int clength,i;
 	unsigned int num_space = 0;
@@ -188,7 +260,9 @@ void wcstrim(wchar_t* _wStr){
 		}
 	}
 }
-/*	convert string to lowercase letter	*/
+*/
+/*	convert string to lowercase letter	*//*
+
 void wcslower(wchar_t* _wStr){
 	unsigned int l,j;
 	l = wcslen(_wStr);
@@ -196,7 +270,9 @@ void wcslower(wchar_t* _wStr){
 		_wStr[j] = towlower(_wStr[j]);continue;
 	}
 }
-/*	convert string to uppercase letter	*/
+*/
+/*	convert string to uppercase letter	*//*
+
 void wcsupper(wchar_t* _wStr){
 	unsigned int l,j;
 	l = wcslen(_wStr);
@@ -216,5 +292,4 @@ int strtowide(const char*_Str , wchar_t* _Wsc){
 	MultiByteToWideChar(CP_OEMCP,0,_Str,-1,_Wsc, strlen(_Str) + 2);
 	return 0;
 }
-#endif
-#endif
+#endif*/
