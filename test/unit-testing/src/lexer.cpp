@@ -1,60 +1,25 @@
-#include<gtest/gtest.h>
 #include <core/io/io.h>
-#include <tokens.h>
+#include <gtest/gtest.h>
+#include <lexer-set.h> //TODO resolve path.
 #include <lexer.h>
-#include "../../../console/lexer-set.h" //TODO resolve path.
+#include <tokens.h>
 
 class LexerTest : public testing::Test {
-protected:
-	void SetUp() override {
+  protected:
+	void SetUp() override {}
 
-	}
+	constexpr static const int tokenExpectedList[] = {NAME,  LPARE, NAME,	 EXP,	 NAME,	MULTI, NAME,  EXP,	  NAME,
+											COMMA, NAME,  RPARE, SUBTR,	 NAME,	LPARE, NAME,  EXP,	  LPARE,
+											NAME,  ADDIT, NAME,	 RPARE,	 ADDIT, NAME,  RPARE, TERMIN, NAME,
+											LPARE, NAME,  RPARE, ASSIGN, NAME,	EXP,   NAME,  TERMIN};
 };
 
 TEST_F(LexerTest, TokenString) {
 
-	static const int tokenExpectedList[] = {
-			NAME,
-			LPARE,
-			NAME,
-			EXP,
-			NAME,
-			MULTI,
-			NAME,
-			EXP,
-			NAME,
-			COMMA,
-			NAME,
-			RPARE,
-			SUBTR,
-			NAME,
-			LPARE,
-			NAME,
-			EXP,
-			LPARE,
-			NAME,
-			ADDIT,
-			NAME,
-			RPARE,
-			ADDIT,
-			NAME,
-			RPARE,
-			TERMIN,
-			NAME,
-			LPARE,
-			NAME,
-			RPARE,
-			ASSIGN,
-			NAME,
-			EXP,
-			NAME,
-			TERMIN
-	};
-
 	Lexer lexer;
 	IO ios;
 	openString("integ( x^2 * e^2, dx) - deriv(x^(2 + x) + 1); f(x) = x^2;", &ios);
-	createLexer(&lexer, NULL);
+	createLexer(&lexer, nullptr);
 	lexerSetIO(&lexer, &ios);
 
 	const Token *token;
@@ -65,10 +30,12 @@ TEST_F(LexerTest, TokenString) {
 	while (nextToken(&lexer, &token) != EOF) {
 		SCOPED_TRACE(i);
 		const char *text, *name;
+
 		getTokenText(token, &text);
 		getTokenName(token, &name);
+		
 		int tok = getTokenType(token);
-		//ASSERT_STREQ(name, )
+		// ASSERT_STREQ(name, )
 		ASSERT_EQ(tokenExpectedList[i], tok);
 		i++;
 	}
@@ -80,6 +47,4 @@ TEST_F(LexerTest, TokenString) {
 	lexerSetIO(&lexer, &ios);
 }
 
-TEST_F(LexerTest, TokenFile) {
-
-}
+TEST_F(LexerTest, TokenFile) {}

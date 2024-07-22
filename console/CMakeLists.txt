@@ -1,7 +1,7 @@
-
-
+LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" )
+INCLUDE(cxxopt)
 
 # Main executable.
-ADD_EXECUTABLE(solver main.c opt.c lexer-set.c lexer-set.h parser-set.h parset-set.c opt.h semantic-analysis.c solver.c)
-TARGET_LINK_LIBRARIES(solver solver-core)
+ADD_EXECUTABLE(solver main.cpp)
+TARGET_LINK_LIBRARIES(solver solver-core solver-math cxxopts)
 INSTALL(TARGETS solver DESTINATION bin)
