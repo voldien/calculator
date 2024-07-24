@@ -25,9 +25,9 @@ extern "C" {
 /*TODO relocate errors!.    */
 #define ERROR_NO_TYPE
 
-typedef int (*nameTokenSyntex)(struct lexer *lexer, Token *token);
+typedef int (*nameTokenSyntex)(struct lexer_t *lexer, Token *token);
 
-typedef struct lexer {
+typedef struct lexer_t {
 
 	/*  TODO add vector object. */
 	const Token *tokens;
@@ -73,7 +73,7 @@ extern int verifiyTokenList(const Token *tokens, int nrTokens);
 extern int resetLexer(Lexer *lexer);
 extern int isLexerEof(const Lexer *lexer);
 
-extern int consume(Lexer *lexer, int nchar);
+extern long int consume(Lexer *lexer, int nchar);
 extern int extractName(Lexer *lexer, const char *name);
 
 /**

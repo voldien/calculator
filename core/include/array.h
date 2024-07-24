@@ -21,12 +21,12 @@ extern "C" {
 #endif
 
 typedef struct array_t {
-	void* pData;
+	void *pData;
 	unsigned int nrElements;
 	unsigned int reserved;
 } Array;
 
-extern void allocateArray(Array* array, unsigned int nrReserved, unsigned int typeSize);
+extern void allocateArray(Array *array, unsigned int nrReserved, unsigned int typeSize);
 
 #ifdef __cplusplus /*	C++ Environment	*/
 }

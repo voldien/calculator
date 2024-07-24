@@ -27,20 +27,19 @@ typedef struct stack_t {
 	long int index;
 } Stack;
 
-extern int createStack(Stack* stack, long int typeSize, long int nrReserved);
-extern int deleteStack(Stack* stack);
+extern int createStack(Stack *stack, long int typeSize, long int nrReserved);
+extern int deleteStack(Stack *stack);
 
-extern void* push(Stack* stack);
-extern void* pop(Stack* stack);
+extern void *push(Stack *stack);
+extern void *pop(Stack *stack);
 
-extern int nrElements(Stack* stack);
+extern int nrElements(const Stack *stack);
 
-extern int stackNrReserved(Stack* stack);
-extern void* stackPeek(Stack* stack);
+extern int stackNrReserved(Stack *stack);
+extern void *stackPeek(const Stack *stack);
 
 #ifdef __cplusplus /*	C++ Environment	*/
 }
 #endif
-
 
 #endif

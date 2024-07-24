@@ -16,6 +16,7 @@
 #include "parser-set.h"
 #include "solve.h"
 #include <clocale> /* struct lconv, setlocale, localeconv */
+#include <cstdio>
 #include <cstdlib>
 #include <cxxopts.hpp>
 #include <getopt.h>
@@ -31,7 +32,7 @@ int main(int argc, char **argv) {
 	/*	Default common options between all samples.	*/
 	cxxopts::Options options("Solver ", "");
 	cxxopts::OptionAdder &addr = options.add_options("Solver")("h,help", "helper information.")(
-		"d,debug", "Debug Mode.", cxxopts::value<bool>()->default_value("true"))("h,help", "helper information.")(
+		"d,debug", "Debug Mode.", cxxopts::value<bool>()->default_value("true"))(
 		"f,file", "File Path.", cxxopts::value<std::string>())("i,interactive", "Interactive Mode.",
 															   cxxopts::value<bool>()->default_value("false"))(
 		"V,verbose", "Verbose Mode.", cxxopts::value<bool>()->default_value("false"));
@@ -42,13 +43,12 @@ int main(int argc, char **argv) {
 		return EXIT_SUCCESS;
 	}
 
+	const bool debug = result["debug"].as<bool>();
+	const bool interactive = result["interactive"].as<bool>();
 	std::string filePath = "samples/algebra.ms";
 
 	// Check pipe,
 	//
-
-	long value;
-
 	// TODO deal with the locale.
 	const char *locale = setlocale(LC_ALL, "");
 	int t = MB_CUR_MAX;
@@ -56,65 +56,89 @@ int main(int argc, char **argv) {
 	// setlocale (LC_COLLATE,"");
 	struct lconv *lc = localeconv();
 
-	/*  Create lexer.   */
-	Lexer *lexer;
 	Token *token;
 	Node root;
 
-	if (!allocateLexer(&lexer)) {
-		/*	*/
-		fprintf("Failed to Allocate Lexer Object");
-		return EXIT_FAILURE;
-	}
+	/*  Create lexer.   */
+	Lexer *lexer;
+	Parser *parser;
 
-	const LexerDesc lexerDesc = {
-		.tokens = tokens,
-		.nrTokens = ntokens,
-		.comments = commentToken,
-		.nrCommentTokens = nCommentTokens,
-		.ignoreToken = ignoreTokens,
-		.nrIgnoreTokens = nIgnoreTokens,
-	};
-
-	createLexer(lexer, &lexerDesc);
-	IO io, ios;
-	openFile("samples/algebra.ms", &io);
-
-	lexerSetIO(lexer, &io);
+	IO ioData;
 
 	openString("integ( x^2 * e^2, dx) - deriv(x^(2 + x) + 1); f(x) = x^2; //  \n /* \n \n \t */ \n // Compute "
 			   "something \n integ(x^2, dx); fy(x) = {x^2 where x > 10, x^0.5 where 0 < x <= 10};",
-			   &ios);
-	lexerSetIO(lexer, &ios);
-	lexerDebugPrint(lexer);
+			   &ioData);
 
-	std::string str;
-	std::getline(std::cin, str);
+	if (openFile("samples/algebra.ms", &ioData)) {
+	}
+
+	if (interactive) {
+		if (openMem(4096, &ioData) != 0) {
+			std::cerr << "Failed  to allocate interactive buffer" << std::endl;
+			goto error;
+		}
+	} else {
+	}
+
+	if (createMathSolverLexer(&lexer, &ioData) != 0) {
+		std::cerr << "Failed to Init" << std::endl;
+		goto error;
+	}
+
+	if (debug) {
+		lexerDebugPrint(lexer);
+	}
 
 	/*  Parser. */
-	Parser parser;
-	createParser(&parser, lexer, nullptr);
+	if (createSolverParser(&parser, lexer) != 0) {
+		std::cerr << "Failed to Init" << std::endl;
+		goto error;
+	}
+
+	if (interactive) {
+
+		bool interactive_active = true;
+		while (interactive_active) {
+			const char *terminate = "\0";
+
+			for (std::string input_string; std::getline(std::cin, input_string);) {
+				
+				if (input_string.find("exit") != std::string::npos) {
+					interactive_active = false;
+				} else if (input_string.length() > 0) {
+
+					/*	Reset buffer, write string.	*/
+					ioData.seek(&ioData, 0, SEEK_SET);
+					ioData.write(&ioData, input_string.length(), input_string.c_str());
+					ioData.write(&ioData, 1, terminate);
+
+					/*	Parse data.	*/
+					if (debug) {
+						lexerDebugPrint(lexer);
+					}
+				}
+			}
+		}
+	} else {
+		/*	Read directly from IO file and parse.	*/
+	}
 
 	/*  IR. */
 	IRRoot irnode;
-	createIR(&irnode, &parser, &root);
+	createIR(&irnode, parser, &root);
 
 	/*  */
 	// buildIR(&irnode);
 
 	/*  Semantic analysis.  */
 
-	deallocteLexer(lexer);
-
-	/*  Main code.  */
-	createSolverLexer(&lexer, &io);
-	// createSolverParser(parser, lexer);
-
-	releaseSolverParser(&parser);
+	releaseSolverParser(parser);
 	releaseSolverLexer(lexer);
 
 	// TODO move the logic to the solve function and other functions.
 	solve("x = { x | x <- [0..1]}; ");
+
+error:
 
 	return EXIT_SUCCESS;
 }

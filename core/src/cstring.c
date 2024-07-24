@@ -1,43 +1,34 @@
-#include"cstring.h"
-#include<stdlib.h>
-#include<string.h>
-#include<malloc.h>
-#include <limits.h>
-#include<wchar.h>
+#include "cstring.h"
+#include <malloc.h>
+#include <stddef.h>
+#include <string.h>
+#include <wchar.h>
 
 void initString(CString *string) {
 	string->text = NULL;
 	string->len = 0;
 }
 
-void allocateString(CString *string, int len) {
-	
+void allocateString(CString *string, const int len) {
+
 	const int charLen = sizeof(char);
-	string->text = realloc(string->text, charLen * len);
+	string->text = realloc(string->text, (long)charLen * len);
 	string->len = 0;
 }
 
-void setString(CString *string, char *text) {
-	allocateString(string, strlen(text));
+void setString(CString *string, const char *text) {
+	allocateString(string, strlen(text) + 1);
 	strcpy(string->text, text);
 	string->len = strlen(text);
 }
 
-void deleteString(CString *string) {
-	free(string->text);
-}
+void deleteString(CString *string) { free(string->text); }
 
-void setStringN(CString *string, char *text, int numChr) {
-	strncat(string->text, text, numChr);
-}
+void setStringN(CString *string, char *text, int numChr) { strncat(string->text, text, numChr); }
 
-void copyString(CString *source, CString *dest) {
+void copyString(CString *source, CString *dest) {}
 
-}
-
-void copyStringN(CString *source, CString *dest, int numChr) {
-
-}
+void copyStringN(CString *source, CString *dest, int numChr) {}
 
 char *strString(CString *string, const char *str) {}
 
@@ -51,17 +42,15 @@ char *strlowerString(CString *string) {}
 
 int insertString(CString *string, const char *str) {}
 
-int changeEncodingString(CString *string, int encoding) {
-
-}
+int changeEncodingString(CString *string, int encoding) {}
 
 /*
 #include"string_utility.h"
 #include<assert.h>
-#include<string.h>
 #include<math.h>
-#include<stdlib.h>
 #include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
 
 int strstrsafe(const char* _Str,const char* _Str_comp, char** _Str_find){
 	char* cchar = strstr(_Str,_Str_comp);
@@ -181,62 +170,62 @@ void strupper(char* _Str){
 	}
 }
 */
-/*	repeting sequence	*//*
+/*	repeting sequence	*/ /*
 
-int strsequence(char* _Str,char*_Str_sequence){
-	unsigned int n = 0;	// number of sequence
-	char* cpos = _Str;	//
-	while(1){
-		cpos = strstr(cpos, _Str_sequence);
-		if(!cpos)break;
-		cpos += strlen(_Str_sequence);
-		n++;
-	}
-	return n;
-}
-int strrepword(char* _Str, char* _Str_word_sequence){
-	unsigned int n = 0; //
-	unsigned int len = strlen(_Str_word_sequence);
-	char* cpos = _Str;  //
-	while(1){
-		cpos = strstr(cpos,_Str_word_sequence);
-		if(!cpos)break;// no more identially
-		if(!isalpha(*(cpos - 1)) &&
-		   !isalpha(*(cpos + len)))
-			n++;
-		cpos += len;// out of scope of current search word
-	}
-	return n;
-}
-int strinsert(char** _Str, char* _Str_insert, int pos){
-	unsigned int insert_len; // str length
-	unsigned int str_len;    // str length
-	char* _tStr = 0;
-	if(!_Str_insert)
-		return -1;// no insert c-string!
-	insert_len = strlen(_Str_insert);
-	str_len = strlen(_Str[0]);
+ int strsequence(char* _Str,char*_Str_sequence){
+	 unsigned int n = 0;	// number of sequence
+	 char* cpos = _Str;	//
+	 while(1){
+		 cpos = strstr(cpos, _Str_sequence);
+		 if(!cpos)break;
+		 cpos += strlen(_Str_sequence);
+		 n++;
+	 }
+	 return n;
+ }
+ int strrepword(char* _Str, char* _Str_word_sequence){
+	 unsigned int n = 0; //
+	 unsigned int len = strlen(_Str_word_sequence);
+	 char* cpos = _Str;  //
+	 while(1){
+		 cpos = strstr(cpos,_Str_word_sequence);
+		 if(!cpos)break;// no more identially
+		 if(!isalpha(*(cpos - 1)) &&
+			!isalpha(*(cpos + len)))
+			 n++;
+		 cpos += len;// out of scope of current search word
+	 }
+	 return n;
+ }
+ int strinsert(char** _Str, char* _Str_insert, int pos){
+	 unsigned int insert_len; // str length
+	 unsigned int str_len;    // str length
+	 char* _tStr = 0;
+	 if(!_Str_insert)
+		 return -1;// no insert c-string!
+	 insert_len = strlen(_Str_insert);
+	 str_len = strlen(_Str[0]);
 
-	_tStr = (char*)malloc(str_len + insert_len + 1);
-	memcpy(_tStr,_Str[0], str_len + 1);
-	free(_Str[0]);
-	_Str[0] = _tStr;
+	 _tStr = (char*)malloc(str_len + insert_len + 1);
+	 memcpy(_tStr,_Str[0], str_len + 1);
+	 free(_Str[0]);
+	 _Str[0] = _tStr;
 
-	memmove((*_Str + pos + insert_len), (*_Str + pos),str_len - insert_len);
-	memcpy((*_Str + pos),_Str_insert, insert_len);
-	return 1;
-}
+	 memmove((*_Str + pos + insert_len), (*_Str + pos),str_len - insert_len);
+	 memcpy((*_Str + pos),_Str_insert, insert_len);
+	 return 1;
+ }
 
-int strerase(char** _Str, int pos, int length){
-	unsigned int str_len;    // str length
-	char* _tStr = 0;
-	if(!_Str)
-		return 0;// Invalid pointer
-	str_len = strlen(_Str[0]);
-}
+ int strerase(char** _Str, int pos, int length){
+	 unsigned int str_len;    // str length
+	 char* _tStr = 0;
+	 if(!_Str)
+		 return SOL_OK;// Invalid pointer
+	 str_len = strlen(_Str[0]);
+ }
 
 
-*/
+ */
 /*
 	// UNICODE
 *//*
@@ -244,52 +233,52 @@ int strerase(char** _Str, int pos, int length){
 //===========================================
 #ifdef UNICODE
 */
-/*	trim c-wide-string	*//*
+/*	trim c-wide-string	*/				   /*
+				
+				 void wcstrim(wchar_t* _wStr){
+					 unsigned int clength,i;
+					 unsigned int num_space = 0;
+					 wchar_t* cpos = _wStr;
+					 clength = wcslen(_wStr);
+					 while(1){
+						 cpos = (wchar_t*)wcschr(cpos,L' ');
+						 if(!cpos)break;
+						 num_space++;
+						 for(i = clength / 2; i < ((unsigned int)cpos - (unsigned int)_wStr) + 1; i++){
+							 cpos[i] = (cpos[i + 1]);continue;
+						 }
+					 }
+				 }
+				 */
+/*	convert string to lowercase letter	*/ /*
 
-void wcstrim(wchar_t* _wStr){
-	unsigned int clength,i;
-	unsigned int num_space = 0;
-	wchar_t* cpos = _wStr;
-	clength = wcslen(_wStr);
-	while(1){
-		cpos = (wchar_t*)wcschr(cpos,L' ');
-		if(!cpos)break;
-		num_space++;
-		for(i = clength / 2; i < ((unsigned int)cpos - (unsigned int)_wStr) + 1; i++){
-			cpos[i] = (cpos[i + 1]);continue;
-		}
-	}
-}
-*/
-/*	convert string to lowercase letter	*//*
+ void wcslower(wchar_t* _wStr){
+	 unsigned int l,j;
+	 l = wcslen(_wStr);
+	 for(j = 0; j < l; j++){
+		 _wStr[j] = towlower(_wStr[j]);continue;
+	 }
+ }
+ */
+/*	convert string to uppercase letter	*/ /*
 
-void wcslower(wchar_t* _wStr){
-	unsigned int l,j;
-	l = wcslen(_wStr);
-	for(j = 0; j < l; j++){
-		_wStr[j] = towlower(_wStr[j]);continue;
-	}
-}
-*/
-/*	convert string to uppercase letter	*//*
+ void wcsupper(wchar_t* _wStr){
+	 unsigned int l,j;
+	 l = wcslen(_wStr);
+	 for(j = 0; j < l; j++){
+		 _wStr[j] = towupper(_wStr[j]);continue;
+	 }
+ }
 
-void wcsupper(wchar_t* _wStr){
-	unsigned int l,j;
-	l = wcslen(_wStr);
-	for(j = 0; j < l; j++){
-		_wStr[j] = towupper(_wStr[j]);continue;
-	}
-}
+ #ifdef _WIN32
+ #include<Windows.h>
+ int widetostr(const wchar_t* _Wsc, char* _Str){
+	 WideCharToMultiByte(CP_OEMCP,0,_Wsc, -1, _Str,sizeof(char) * wcslen(_Wsc) + sizeof(char), 0,0);
+	 return SOL_OK;
+ }
 
-#ifdef _WIN32
-#include<Windows.h>
-int widetostr(const wchar_t* _Wsc, char* _Str){
-	WideCharToMultiByte(CP_OEMCP,0,_Wsc, -1, _Str,sizeof(char) * wcslen(_Wsc) + sizeof(char), 0,0);
-	return 0;
-}
-
-int strtowide(const char*_Str , wchar_t* _Wsc){
-	MultiByteToWideChar(CP_OEMCP,0,_Str,-1,_Wsc, strlen(_Str) + 2);
-	return 0;
-}
-#endif*/
+ int strtowide(const char*_Str , wchar_t* _Wsc){
+	 MultiByteToWideChar(CP_OEMCP,0,_Str,-1,_Wsc, strlen(_Str) + 2);
+	 return SOL_OK;
+ }
+ #endif*/

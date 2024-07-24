@@ -35,11 +35,11 @@ typedef struct c_string_t {
 // TODO refactor function
 extern void initString(CString *string);
 
-extern void allocateString(CString *string, int len);
+extern void allocateString(CString *string, const int len);
 
 extern void deleteString(CString *string);
 
-extern void setString(CString *string, char *text);
+extern void setString(CString *string, const char *text);
 
 extern void setStringN(CString *string, char *text, int numChr);
 
