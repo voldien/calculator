@@ -1,4 +1,5 @@
 #include "lexer-set.h"
+#include "error.h"
 #include "tokens.h"
 #include <lexer.h>
 #include <stdio.h>
@@ -13,7 +14,7 @@ const Token ignoreTokens[] = {
 
 const int nIgnoreTokens = sizeof(ignoreTokens) / sizeof(ignoreTokens[0]);
 
-static int handleSingleLineComment(Lexer *lexer, const Token *token) {
+static int handleSingleLineComment(struct lexer_t *lexer, struct token_t *token) {
 	IO *io = lexer->io;
 	int found;
 	char buf[32];
@@ -29,7 +30,7 @@ static int handleSingleLineComment(Lexer *lexer, const Token *token) {
 	return isLexerEof(lexer);
 }
 
-static int handleMultilineComment(Lexer *lexer, const Token *token) {
+static int handleMultilineComment(struct lexer_t *lexer, struct token_t *token) {
 	IO *io = lexer->io;
 	char buf[32];
 
@@ -47,9 +48,7 @@ static int handleMultilineComment(Lexer *lexer, const Token *token) {
 	return isLexerEof(lexer);
 }
 
-static int includeFile(Lexer* lexer, const Token* token){
-	return 0;
-}
+static int includeFile(struct lexer_t *lexer, struct token_t *token) { return SOL_OK; }
 
 const Token commentToken[] = {
 	{"/*", SINGLE_LINE_COMMENT, 2, "Multiline comment", handleMultilineComment},
@@ -60,7 +59,6 @@ const Token commentToken[] = {
 const int nCommentTokens = sizeof(commentToken) / sizeof(commentToken[0]);
 
 const Token tokens[] = {
-		{"#include", INCLUDE, sizeof("#include"), "Include Include", includeFile},
 	{"(", LPARE, 1, "left parenthesis", NULL},
 	{")", RPARE, 1, "right parenthesis", NULL},
 	{"[", LSQBR, 1, "left open bracket", NULL},
@@ -78,7 +76,7 @@ const Token tokens[] = {
 	{"|", GIVEN, 1, "given", NULL},
 	{">=", GREAEQ, 2, "greater equal", NULL},
 	{"<=", LESSEQ, 2, "less equal", NULL},
-	{"<-", 22, 2, "", NULL},
+	{"<-", SEMIC, 2, "", NULL},
 	{"=", ASSIGN, 1, "assign", NULL},
 	{";", TERMIN, 1, "terminate", NULL},
 	{"<", LESS, 1, "less", NULL},
@@ -86,18 +84,21 @@ const Token tokens[] = {
 	{":", SEMIC, 1, "semi colon", NULL},
 	{"!", EXCLA, 1, "exclamation", NULL},
 	{"'", SINQO, 1, "single quote", NULL},
-	{"in", TERMIN, 4, "in", NULL},
-	{"where", TERMIN, 7, "where", NULL},
+	{"in", TERMIN, 2, "in", NULL},
+	{"where", TERMIN, 5, "where", NULL},
+	{"#include", INCLUDE, sizeof("#include") - 1, "Include", includeFile},
+	{"\"", STRING_QUOTATION, 5, "quotation", NULL},
 };
 const int ntokens = sizeof(tokens) / sizeof(tokens[0]);
 
-int createSolverLexer(Lexer **lexer, IO *io) {
+int createMathSolverLexer(Lexer **lexer, IO *io) {
 
-	if (!allocateLexer(&lexer)) {
-		return 0;
+	if (!allocateLexer(lexer)) {
+		printf("Failed to Allocate Lexer Object");
+		return 1;
 	}
 
-	LexerDesc lexerDesc = {
+	const LexerDesc lexerDesc = {
 		.tokens = tokens,
 		.nrTokens = ntokens,
 		.comments = commentToken,
@@ -106,10 +107,10 @@ int createSolverLexer(Lexer **lexer, IO *io) {
 		.nrIgnoreTokens = nIgnoreTokens,
 	};
 
-	createLexer(lexer, &lexerDesc);
-	lexerSetIO(*lexer, io);
+	int status = createLexer(*lexer, &lexerDesc);
+	status = lexerSetIO(*lexer, io);
 
-	return 0;
+	return status;
 }
 
-int releaseSolverLexer(Lexer *lexer) { deallocteLexer(lexer); }
+int releaseSolverLexer(Lexer *lexer) { return deallocteLexer(lexer); }

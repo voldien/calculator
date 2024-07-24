@@ -40,7 +40,7 @@
 //			words[i] = null;
 //	} else {
 //		if (size < words.length)
-//			return 0; //throw new IllegalArgumentException("Size must be greater than previous size");
+//			return SOL_OK; //throw new IllegalArgumentException("Size must be greater than previous size");
 //		hashTableReHash(size);
 //	}
 //}

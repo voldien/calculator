@@ -1,5 +1,7 @@
 #include "lexer.h"
+#include "error.h"
 #include <assert.h>
+#include <ctype.h>
 #include <malloc.h>
 #include <stdio.h>
 #include <string.h>
@@ -7,45 +9,51 @@
 int allocateLexer(Lexer **lexer) {
 	*lexer = (Lexer *)malloc(sizeof(Lexer));
 	if (!*lexer) {
-		return 0;
+		return SOL_OK;
 	}
 
 	return 1;
 }
 
-int deallocteLexer(Lexer *lexer) { free(lexer); }
+int deallocteLexer(Lexer *lexer) {
+	free(lexer);
+	return SOL_OK;
+}
 
-int initLexer(Lexer *lexer) { lexer->io = NULL; }
+int initLexer(Lexer *lexer) {
+	lexer->io = NULL;
+	return SOL_OK;
+}
 
 int createLexer(Lexer *lexer, const LexerDesc *desc) {
-	int status;
+	int status = 0;
 
 	if (lexer == NULL) {
-		return 0;
+		return SOL_OK;
 	}
 	if (desc == NULL) {
-		return 0;
+		return SOL_OK;
 	}
 
-	initLexer(lexer);
+	status = initLexer(lexer);
 
 	/*  Verify the token list.  */
 	status = verifiyTokenList(desc->tokens, desc->nrTokens);
-	if (!status) {
+	if (status != 0) {
 		return status;
 	}
 	status = verifiyTokenList(desc->comments, desc->nrCommentTokens);
-	if (!status) {
+	if (status != 0) {
 		return status;
 	}
 	status = verifiyTokenList(desc->ignoreToken, desc->nrIgnoreTokens);
-	if (!status) {
+	if (status != 0) {
 		return status;
 	}
 
 	/*  Assign token list.  */
 	lexer->tokens = desc->tokens;
-	lexer->nrIgnoreTokens = desc->nrTokens;
+	lexer->nrToken = desc->nrTokens;
 
 	/*  Assign comment token list.  */
 	lexer->comments = desc->comments;
@@ -53,21 +61,21 @@ int createLexer(Lexer *lexer, const LexerDesc *desc) {
 
 	/*  Assign ignore token list.  */
 	lexer->ignoreToken = desc->ignoreToken;
-	lexer->nrIgnoreTokens = desc->nrTokens;
-	return 0;
+	lexer->nrIgnoreTokens = desc->nrIgnoreTokens;
+	return SOL_OK;
 }
 
 int lexerSetIO(Lexer *lexer, IO *io) {
-	verifiyLexerIO(io);
+	int status = verifiyLexerIO(io);
 	lexer->io = io;
-	return 1;
+	return status;
 }
 
 int verifiyLexerIO(IO *io) {
-	if (io->tell && io->read && io->seek) {
+	if (!io->tell && !io->read && !io->seek) {
 		return 1;
 	}
-	return 0;
+	return SOL_OK;
 }
 
 int isLexerEof(const Lexer *lexer) {
@@ -88,10 +96,10 @@ int verifiyTokenList(const Token *tokens, int nrTokens) {
 		}
 	}
 
-	return 1;
+	return SOL_OK;
 }
 
-int consume(Lexer *lexer, int nchar) {
+long int consume(Lexer *lexer, int nchar) {
 
 	IO *io = lexer->io;
 	/*  */
@@ -128,6 +136,7 @@ long int nextToken(Lexer *lexer, const Token **token) {
 		}
 	}
 
+	/*	*/
 	do {
 		found = 0;
 		for (int j = 0; j < lexer->nrIgnoreTokens; j++) {
@@ -135,6 +144,7 @@ long int nextToken(Lexer *lexer, const Token **token) {
 			const Token *ignoreTok = &lexer->ignoreToken[j];
 			const char *text = ignoreTok->text;
 			io->peak(io, ignoreTok->len, buf);
+
 			if (strncmp(text, buf, ignoreTok->len) == 0) {
 				consume(lexer, ignoreTok->len);
 				found = 1;
@@ -175,29 +185,37 @@ long int nextToken(Lexer *lexer, const Token **token) {
 	io->seek(io, -1, IO_SEEK_CUR);
 
 	if (nameLen > 0) {
+		/*	*/
 		lexer->name.text = buf;
 		lexer->name.len = nameLen;
 		lexer->name.type = 0; // TOOD add name
 		lexer->name.name = "name";
+
 		*token = &lexer->name;
 		return io->tell(io);
 	}
-	return EOF; /*  Error.  */
+
+	/*  No more token.  */
+	return EOF;
 }
 
 int lexerDebugPrint(Lexer *lexer) {
-	
+
 	const Token *token;
 	IO *io = lexer->io;
-	long int prevSeek = io->tell(io);
+	const long int prevSeek = io->tell(io);
 
 	while (nextToken(lexer, &token) != EOF) {
+
 		const char *text, *name;
 		getTokenText(token, &text);
 		getTokenName(token, &name);
-		int tok = getTokenType(token);
+
+		const int tok = getTokenType(token);
 		printf("token %d, symbol %s  len %d, desc-name: %s \n", tok, text, token->len, name);
+		fflush(stdout);
 	}
 
 	io->seek(io, prevSeek, IO_SEEK_SET);
+	return SOL_OK;
 }

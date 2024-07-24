@@ -1,11 +1,42 @@
-#include"tree.h"
+#include "tree.h"
+#include "error.h"
 
-
-void createTree(Tree** tree, unsigned int nodes){
-    (*tree)->nodes = malloc(sizeof(Node) * nodes);
+void createTree(Tree **tree, unsigned int nodes) {
+	(*tree)->nodes = malloc(sizeof(Node) * nodes);
+	(*tree)->nrNodes = 0;
+	(*tree)->nodes->numChildren = 0;
+	(*tree)->nodes->sibling = NULL;
+	(*tree)->nodes->child = NULL;
+	(*tree)->nodes->parent = NULL;
 }
 
-// }
+void treeAddNode(Tree *root, Node *child) {
+	Node *find;
+
+	root->nrNodes++;
+	// if (!this->child) {
+	// 	this->setChild(pchild);
+	// 	child->setParent(this);
+	// } else {
+
+	// 	find = this->child;
+	// 	while (find) {
+	// 		if (find->sibling) {
+	// 			find = find->sibling;
+	// 		} else {
+	// 			break;
+	// 		}
+	// 	}
+	// 	find->sibling = pchild;
+	// 	find->sibling->setParent(this);
+	// }
+}
+void treeSetParent(Tree *node, Node *parent) {}
+void treeSetChild(Tree *node, int nthChild, Node *child) {}
+
+Node *treeGetParent(Tree *parent) { return NULL; }
+int treeIsRoot(Node *node) { return SOL_OK; }
+int treeNumChildren(Node *parent) { return parent->numChildren; }
 
 // ITree() {
 // 			this->sibling = nullptr;

@@ -15,6 +15,7 @@
  */
 #ifndef _IO_H_
 #define _IO_H_ 1
+#include <stddef.h>
 
 #ifdef __cplusplus /*	C++ Environment	*/
 extern "C" {
@@ -30,6 +31,7 @@ extern "C" {
 /**
  *	IO callback functions.
  */
+struct io_t;
 typedef long int (*IO_open)(struct io_t *io, const char *path);
 typedef long int (*IO_close)(struct io_t *io);
 typedef long int (*IO_read)(struct io_t *io, long int nbytes, void *pbuf);
@@ -57,6 +59,7 @@ typedef struct io_t {
 
 extern int openFile(const char *path, IO *io);
 extern int openString(const char *text, IO *io);
+extern int openMem(size_t nBytes, IO *io);
 extern void releaseIO(IO *io);
 
 #ifdef __cplusplus /*	C++ Environment	*/

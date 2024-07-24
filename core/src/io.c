@@ -1,4 +1,5 @@
 #include "core/io/io.h"
+#include "error.h"
 #include <assert.h>
 #include <cstring.h>
 #include <malloc.h>
@@ -10,14 +11,17 @@ static long int file_open(struct io_t *io, const char *path) {
 	file = fopen(path, "rb");
 	io->_data = file;
 	if (!io->_data) {
-		return 0;
+		return SOL_OK;
 	}
+
+	return SOL_OK;
 }
 
 static long int file_close(struct io_t *io) {
 	FILE *file = io->_data;
 	fclose(file);
 	io->_data = NULL;
+	return SOL_OK;
 }
 
 static long int file_read(struct io_t *io, long int nbytes, void *pbuf) {
@@ -60,7 +64,7 @@ static long int file_tell(struct io_t *io) {
 	return pos;
 }
 
-long int file_peak(struct io_t *io, long int nbytes, void *pbuf) {
+static long int file_peak(struct io_t *io, long int nbytes, void *pbuf) {
 	FILE *file = io->_data;
 	long int pos = io->tell(io);
 	long int npeek = io->read(io, nbytes, pbuf);
@@ -68,7 +72,7 @@ long int file_peak(struct io_t *io, long int nbytes, void *pbuf) {
 	return npeek;
 }
 
-int file_eof(struct io_t *io) {
+static long int file_eof(struct io_t *io) {
 	FILE *file = io->_data;
 	int status = feof(file);
 	return status != 0;
@@ -86,6 +90,7 @@ int openFile(const char *path, IO *io) {
 	io->eof = file_eof;
 
 	io->open(io, path);
+	return SOL_OK;
 }
 
 typedef struct io_internal_string {
@@ -99,6 +104,7 @@ static long int string_close(struct io_t *io) {
 	IOInternalString *ios = io->_data;
 	deleteString(&ios->string);
 	free(io->_data);
+	return SOL_OK;
 }
 
 static long int string_read(struct io_t *io, long int nbytes, void *pbuf) {
@@ -145,8 +151,12 @@ static long int string_tell(struct io_t *io) {
 
 long int string_peak(struct io_t *io, long int nbytes, void *pbuf) {
 	IOInternalString *ios = io->_data;
-	int cur = io->tell(io);
+	const int cur = io->tell(io);
+	if (cur + nbytes > ios->string.len) {
+		return -1;
+	}
 	memcpy(pbuf, &ios->string.text[cur], nbytes);
+	return nbytes;
 }
 
 long int string_eof(struct io_t *io) {
@@ -168,6 +178,25 @@ int openString(const char *text, IO *io) {
 	IOInternalString *ios = io->_data;
 	initString(&ios->string);
 	setString(&ios->string, text);
+	return SOL_OK;
+}
+
+int openMem(size_t nBytes, IO *io) {
+	io->open = string_open;
+	io->close = string_close;
+	io->read = string_read;
+	io->write = string_write;
+	io->seek = string_seek;
+	io->tell = string_tell;
+	io->peak = string_peak;
+	io->eof = string_eof;
+
+	io->_data = malloc(sizeof(IOInternalString));
+	IOInternalString *ios = io->_data;
+	ios->pos = 0;
+	allocateString(&ios->string, nBytes);
+
+	return SOL_OK;
 }
 
 void releaseIO(IO *io) {

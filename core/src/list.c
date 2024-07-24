@@ -1,10 +1,11 @@
 #include "list.h"
 #include <malloc.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <string.h>
 
 void listAllocate(List *list, unsigned int elementSize, unsigned int reserved) {
-	list->begin = malloc(elementSize * reserved);
+	list->begin = malloc((unsigned long)elementSize * reserved);
 	list->end = list->begin;
 	list->elementSize = elementSize;
 	list->nrNodes = 0;
@@ -13,7 +14,7 @@ void listAllocate(List *list, unsigned int elementSize, unsigned int reserved) {
 void listDealloc(List *list) { free(list->begin); }
 
 void listResize(List *list, unsigned int nrElements) {
-	list->begin = realloc(list->begin, nrElements * list->elementSize);
+	list->begin = realloc(list->begin, (unsigned long)nrElements * list->elementSize);
 	list->nrReserved = nrElements;
 }
 
@@ -30,7 +31,7 @@ void *listPrev(List *list) {
 void *listPeek(const List *list) { return list->current; }
 
 void listInsert(List *list, unsigned int index, const void *element) {
-	unsigned long int offset = (list->nrNodes * list->elementSize);
+	unsigned long int offset = ((unsigned long)list->nrNodes * list->elementSize);
 	ListNode *insertNode = (ListNode *)&((uint8_t *)list->begin)[offset];
 	memcpy(insertNode->pdata, element, list->elementSize);
 
@@ -58,7 +59,7 @@ void listRemoveAt(List *list, unsigned int index) { list->nrNodes--; }
 void *listGet(List *list, int i) { return list->current[i].pdata; }
 
 void listClear(List *list) {
-	
+
 	/*  Reset counter.  */
 	list->nrNodes = 0;
 

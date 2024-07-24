@@ -8,10 +8,10 @@ class LexerTest : public testing::Test {
   protected:
 	void SetUp() override {}
 
-	constexpr static const int tokenExpectedList[] = {NAME,  LPARE, NAME,	 EXP,	 NAME,	MULTI, NAME,  EXP,	  NAME,
-											COMMA, NAME,  RPARE, SUBTR,	 NAME,	LPARE, NAME,  EXP,	  LPARE,
-											NAME,  ADDIT, NAME,	 RPARE,	 ADDIT, NAME,  RPARE, TERMIN, NAME,
-											LPARE, NAME,  RPARE, ASSIGN, NAME,	EXP,   NAME,  TERMIN};
+	constexpr static const int tokenExpectedList[] = {NAME,	 LPARE, NAME,  EXP,	   NAME,  MULTI, NAME,	EXP,	NAME,
+													  COMMA, NAME,	RPARE, SUBTR,  NAME,  LPARE, NAME,	EXP,	LPARE,
+													  NAME,	 ADDIT, NAME,  RPARE,  ADDIT, NAME,	 RPARE, TERMIN, NAME,
+													  LPARE, NAME,	RPARE, ASSIGN, NAME,  EXP,	 NAME,	TERMIN};
 };
 
 TEST_F(LexerTest, TokenString) {
@@ -33,7 +33,7 @@ TEST_F(LexerTest, TokenString) {
 
 		getTokenText(token, &text);
 		getTokenName(token, &name);
-		
+
 		int tok = getTokenType(token);
 		// ASSERT_STREQ(name, )
 		ASSERT_EQ(tokenExpectedList[i], tok);

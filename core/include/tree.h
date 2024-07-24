@@ -25,8 +25,8 @@ typedef struct node_t {
 	/*  Tree Relation.  */
 	struct node_t *parent;
 	struct node_t *sibling;
-	struct node_t *chid;
-	int nrChildrens;
+	struct node_t *child;
+	int numChildren;
 	/*  Internal object.    */
 	void *_data; /**/
 } Node;
@@ -37,11 +37,11 @@ typedef struct tree_t {
 } Tree;
 
 extern void createTree(Tree **tree, unsigned int nodes);
-extern void treeAddNode(Node *root, Node *child);
-extern void treeSetParent(Node *node, Node *parent);
-extern void treeSetChild(Node *node, int nthChild, Node *child);
+extern void treeAddNode(Tree *root, Node *child);
+extern void treeSetParent(Tree *node, Node *parent);
+extern void treeSetChild(Tree *node, int nthChild, Node *child);
 
-extern Node *treeGetParent(Node *parent);
+extern Node *treeGetParent(Tree *parent);
 extern int treeIsRoot(Node *node);
 extern int treeNumChildren(Node *parent);
 

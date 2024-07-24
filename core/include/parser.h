@@ -75,9 +75,9 @@ typedef struct parser_desc_t {
 /*  Parser Allocating and creation functions.   */
 extern int allocateParser(Parser **parser);
 extern int deallocteParser(Parser *parser);
-extern int createParser(Parser *parser, Lexer *lexer, ParserDesc *parserDesc); // TODO add list of rules.
+
+extern int createParser(Parser *parser, Lexer *lexer, const ParserDesc *parserDesc); // TODO add list of rules.
 extern int verifyParserRules(RuleSet *ruleSet, unsigned int nRules);
-extern int deleteParser(Parser *parser);
 
 /*  Parser parsing functionalities. */
 extern int consumeTokens(Parser *parser);
