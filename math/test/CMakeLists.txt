@@ -1,14 +1,16 @@
 FIND_PACKAGE(GTest REQUIRED)
 IF(GTEST_FOUND)
-	MESSAGE(STATUS "gtest found: ${GTEST_LIBRARIES}")
+	MESSAGE(STATUS "Gtest found: ${GTEST_BOTH_LIBRARIES}")
+ELSE()
+	MESSAGE(ERROR "Gtest is required in order to compile and run the tests")
 ENDIF()
 
 # Source files.
-FILE(GLOB SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
-FILE(GLOB HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
+FILE(GLOB SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/unit-testing/*.cpp)
+FILE(GLOB HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/unit-testing/*.h)
 
 #
-ADD_EXECUTABLE(assert-unit-testing ${SOURCE_FILES} src/parser.cpp)
+ADD_EXECUTABLE(assert-unit-testing ${SOURCE_FILES})
 TARGET_LINK_LIBRARIES(assert-unit-testing ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} solver-core solver-math pthread )
 TARGET_INCLUDE_DIRECTORIES(assert-unit-testing PRIVATE "${GTEST_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/include")
 SET_TARGET_PROPERTIES(assert-unit-testing PROPERTIES
@@ -16,6 +18,7 @@ SET_TARGET_PROPERTIES(assert-unit-testing PROPERTIES
 		LINK_LANGUAGE CXX)
 INSTALL(TARGETS assert-unit-testing DESTINATION bin)
 
-ADD_TEST(NAME assert-functionality
+
+ADD_TEST(NAME unit-test
 		COMMAND assert-unit-testing
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

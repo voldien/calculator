@@ -5,15 +5,6 @@
 #include <stdio.h>
 #include <string.h>
 
-const Token ignoreTokens[] = {
-	{" ", WS, 1, "White space"},
-	{"\n", NEWLINE, 1, "new line"},
-	{"\r", RETLINE, 1, "return line"},
-	{"\t", TABSPACE, 1, "tab space"},
-};
-
-const int nIgnoreTokens = sizeof(ignoreTokens) / sizeof(ignoreTokens[0]);
-
 static int handleSingleLineComment(struct lexer_t *lexer, struct token_t *token) {
 	IO *io = lexer->io;
 	int found;
@@ -32,7 +23,7 @@ static int handleSingleLineComment(struct lexer_t *lexer, struct token_t *token)
 
 static int handleMultilineComment(struct lexer_t *lexer, struct token_t *token) {
 	IO *io = lexer->io;
-	char buf[32];
+	char buf[128];
 
 	int found;
 	const char *endComment = "*/";
@@ -49,6 +40,15 @@ static int handleMultilineComment(struct lexer_t *lexer, struct token_t *token) 
 }
 
 static int includeFile(struct lexer_t *lexer, struct token_t *token) { return SOL_OK; }
+
+const Token ignoreTokens[] = {
+	{" ", WS, 1, "White space"},
+	{"\n", NEWLINE, 1, "new line"},
+	{"\r", RETLINE, 1, "return line"},
+	{"\t", TABSPACE, 1, "tab space"},
+};
+
+const int nIgnoreTokens = sizeof(ignoreTokens) / sizeof(ignoreTokens[0]);
 
 const Token commentToken[] = {
 	{"/*", SINGLE_LINE_COMMENT, 2, "Multiline comment", handleMultilineComment},
