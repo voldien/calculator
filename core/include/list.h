@@ -13,8 +13,8 @@
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  */
-#ifndef SOLVER_LIST_H_
-#define SOLVER_LIST_H_ 1
+#ifndef _SOLVER_LIST_H_
+#define _SOLVER_LIST_H_ 1
 
 #ifdef __cplusplus
 extern "C" {

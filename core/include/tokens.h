@@ -40,12 +40,38 @@ typedef struct token_t {
 
 extern int copyToken(const Token *source_token, Token *dest_token);
 
+/**
+ * @brief Get the Token Type object
+ * 
+ * @param token 
+ * @return int 
+ */
 extern int getTokenType(const Token *token);
 
+/**
+ * @brief Get the Token Name object
+ * 
+ * @param token 
+ * @param name 
+ * @return int 
+ */
 extern int getTokenName(const Token *token, const char **name);
 
+/**
+ * @brief Get the Token Text object
+ * 
+ * @param token 
+ * @param text 
+ * @return int 
+ */
 extern int getTokenText(const Token *token, const char **text);
 
+/**
+ * @brief Get the Token Proc object
+ * 
+ * @param token 
+ * @return token_process 
+ */
 extern token_process getTokenProc(const Token *token);
 
 #ifdef __cplusplus /*	C++ Environment	*/

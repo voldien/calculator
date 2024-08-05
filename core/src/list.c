@@ -56,7 +56,7 @@ void listAppend(List *list, const void *element) {
 
 void listRemoveAt(List *list, unsigned int index) { list->nrNodes--; }
 
-void *listGet(List *list, int i) { return list->current[i].pdata; }
+void *listGet(List *list, int index) { return list->current[index].pdata; }
 
 void listClear(List *list) {
 

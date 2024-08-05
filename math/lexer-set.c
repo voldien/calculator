@@ -93,7 +93,7 @@ const int ntokens = sizeof(tokens) / sizeof(tokens[0]);
 
 int createMathSolverLexer(Lexer **lexer, IO *io) {
 
-	if (!allocateLexer(lexer)) {
+	if (allocateLexer(lexer) != 0) {
 		printf("Failed to Allocate Lexer Object");
 		return 1;
 	}
