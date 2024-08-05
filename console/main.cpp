@@ -65,6 +65,7 @@ int main(int argc, char **argv) {
 
 	IO ioData;
 
+	// TODO: remove
 	openString("integ( x^2 * e^2, dx) - deriv(x^(2 + x) + 1); f(x) = x^2; //  \n /* \n \n \t */ \n // Compute "
 			   "something \n integ(x^2, dx); fy(x) = {x^2 where x > 10, x^0.5 where 0 < x <= 10};",
 			   &ioData);
@@ -77,6 +78,7 @@ int main(int argc, char **argv) {
 			std::cerr << "Failed  to allocate interactive buffer" << std::endl;
 			goto error;
 		}
+
 	} else {
 	}
 
@@ -102,7 +104,7 @@ int main(int argc, char **argv) {
 			const char *terminate = "\0";
 
 			for (std::string input_string; std::getline(std::cin, input_string);) {
-				
+
 				if (input_string.find("exit") != std::string::npos) {
 					interactive_active = false;
 				} else if (input_string.length() > 0) {
@@ -116,6 +118,8 @@ int main(int argc, char **argv) {
 					if (debug) {
 						lexerDebugPrint(lexer);
 					}
+
+					/*	*/
 				}
 			}
 		}
